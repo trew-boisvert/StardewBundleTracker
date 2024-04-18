@@ -12,6 +12,8 @@ class User(db.Model):
     screenname = db.Column(db.String, unique=True)
     password = db.Column(db.String)
 
+    save_files = db.relationship("SaveFile", back_populates="user")
+
     def __repr__(self):
         return f"<User user_id={self.user_id} email={self.email}>"
 
@@ -23,6 +25,9 @@ class SaveFile(db.Model):
     save_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     farm_name = db.Column(db.String)
+
+    user = db.relationship("User", back_populates="save_files")
+    items = db.relationship("Item", secondary="save_items", back_populates="save_files")
 
     def __repr__(self):
         return f"<SaveFile farm={self.farm_name}>"
@@ -38,12 +43,14 @@ class Item(db.Model):
     season_available = db.Column(db.String)
     locations_available = db.Column(db.String)
     conditions_available = db.Column(db.String)
+
+    save_files = db.relationship("SaveFile", secondary="save_items", back_populates="items")
     
     def __repr__(self):
         return f'<Item item_name={self.item_name}>'
 
 
- class SaveItem(db.Model):
+class SaveItem(db.Model):
     """Connects a save file to the items relevant to it"""
 
     __tablename__ = "save_items"
@@ -51,6 +58,7 @@ class Item(db.Model):
     save_item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     save_id = db.Column(db.Integer, db.ForeignKey('saves.save_id'), nullable=False)
     item_id = db.Column(db.Integer, db.ForeignKey('items.item_id'), nullable=False)
+
 
 def connect_to_db(flask_app, db_uri="postgresql:///stardew", echo=True):
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
