@@ -40,7 +40,7 @@ class Item(db.Model):
     item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     item_name = db.Column(db.String)
     bundle_name = db.Column(db.String)
-    season_available = db.Column(db.String)
+    seasons_available = db.Column(db.String) #spring, summer, fall, winter, all
     locations_available = db.Column(db.String)
     conditions_available = db.Column(db.String)
 
@@ -58,6 +58,7 @@ class SaveItem(db.Model):
     save_item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     save_id = db.Column(db.Integer, db.ForeignKey('saves.save_id'), nullable=False)
     item_id = db.Column(db.Integer, db.ForeignKey('items.item_id'), nullable=False)
+    found_status = db.Column(db.String)
 
 
 def connect_to_db(flask_app, db_uri="postgresql:///stardew", echo=True):
